@@ -28,7 +28,7 @@ for table in ['skills', 'knowledge', 'abilities', 'interests', 'work_values', 'w
     element_dict[table] = sorted(els)
 
 # Save element_dict to a file
-output_file = 'visualize-onet/src_data/element_name_dict.json'
+output_file = 'app/src_data/element_name_dict.json'
 with open(output_file, 'w') as f:
     json.dump(element_dict, f, indent=4)
 

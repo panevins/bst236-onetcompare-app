@@ -2,7 +2,7 @@
 import requests
 import pandas as pd
 
-def download_occups(local_filename='visualize-onet/src_data/Occupation Data.txt'):
+def download_occups(local_filename='app/src_data/Occupation Data.txt'):
     # Send a GET request to the URL
     url = 'https://www.onetcenter.org/dl_files/database/db_25_1_text/Occupation Data.txt'
     response = requests.get(url, stream=True)
