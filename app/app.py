@@ -1,6 +1,7 @@
 from dash import Dash, Input, Output, State
 import plotly.graph_objs as go
 import pandas as pd
+import os
 
 # Importing the necessary functions from other modules
 from layout import create_layout
@@ -129,4 +130,5 @@ def update_radar_plots(n_clicks, selected_datasets, selected_titles, selected_sk
 
 if __name__ == "__main__":
     # Run the app
-    app.run(debug=True, port=8000)
+    port = int(os.environ.get("PORT", 8050))  # Default to 8050 if $PORT is not set
+    app.run_server(host="0.0.0.0", port=port)
