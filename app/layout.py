@@ -12,6 +12,7 @@ def update_title_options(folder_path):
 
 def create_layout(app: Dash):
     folder_path = os.path.join(os.path.dirname(__file__), 'src_data/')
+    
     title_options = update_title_options(folder_path)
     with open(os.path.join(folder_path, 'element_name_dict.json'), 'r') as f:
         element_options = json.load(f)
