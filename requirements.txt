@@ -1,3 +1,4 @@
+python_version == "3.10"
 dash==2.11.1
 dash-core-components==2.0.0
 dash-html-components==2.0.0
@@ -30,4 +31,3 @@ python-dateutil==2.9.0.post0
 pytz>=2020.1
 tzdata>=2022.7
 numpy>=1.22.4
-pkg_resources
