@@ -12,7 +12,6 @@ def update_title_options(folder_path):
 
 def create_layout(app: Dash):
     folder_path = os.path.join(os.path.dirname(__file__))
-    
     title_options = update_title_options(folder_path)
     with open(os.path.join(folder_path, 'element_name_dict.json'), 'r') as f:
         element_options = json.load(f)
@@ -43,7 +42,7 @@ def create_layout(app: Dash):
                     options=title_options,
                     multi=True,
                     placeholder="Select 2 titles",
-                    value=['15-2041.00', '19-1041.00'],  # Default selected O*NET-SOC codes
+                    value=['15-2041.01', '19-1041.00'],  # Default selected O*NET-SOC codes
                     style={'width': '100%', 'margin-bottom': '20px'}
                 ),
                 html.Div("2. Select which datasets you would like for comparison of the occupations.", style={'font-weight': 'bold', 'margin-bottom': '10px'}),
@@ -52,7 +51,8 @@ def create_layout(app: Dash):
                         id='dataset-checklist',
                         options=[
                             {'label': 'Skills', 'value': 'Skills'},
-                            {'label': 'Knowledge', 'value': 'Knowledge'}
+                            {'label': 'Knowledge', 'value': 'Knowledge'},
+                            {'label': 'Abilities', 'value': 'Abilities'}
                         ],
                         value=['Skills'],  # Default selected datasets
                         labelStyle={'display': 'inline-block', 'margin-right': '20px'},
@@ -65,7 +65,7 @@ def create_layout(app: Dash):
                     html.Div([
                         dcc.Dropdown(
                             id='skills-dropdown',
-                            options=[{'label': metric, 'value': metric} for metric in element_options['skills']],  # Options will be populated dynamically
+                            options=[{'label': metric, 'value': metric} for metric in element_options['skills']],  # Skills dropdown shown by default
                             multi=True,
                             placeholder="Select Skills",
                             value=['Mathematics', 'Writing', 'Science'],
@@ -73,9 +73,16 @@ def create_layout(app: Dash):
                         ),
                         dcc.Dropdown(
                             id='knowledge-dropdown',
-                            options=[{'label': metric, 'value': metric} for metric in element_options['knowledge']],  # Options will be populated dynamically
+                            options=[{'label': metric, 'value': metric} for metric in element_options['knowledge']],  
                             multi=True,
                             placeholder="Select Knowledge",
+                            style={'width': '100%', 'margin-bottom': '20px'}  # Initially hidden, will be shown based on dataset selection
+                        ),
+                        dcc.Dropdown(
+                            id='abilities-dropdown',
+                            options=[{'label': metric, 'value': metric} for metric in element_options['abilities']],  
+                            multi=True,
+                            placeholder="Select Abilities",
                             style={'width': '100%', 'margin-bottom': '20px'}  # Initially hidden, will be shown based on dataset selection
                         )
                     ]),

@@ -21,6 +21,7 @@ def generate_url(dataset_name):
 def fetch_dataset(dataset_name):
     if dataset_name in dataset_cache:
         return dataset_cache[dataset_name]
+    #local_dir = 'test/example_data/'
     url = generate_url(dataset_name)
     df = download_txtfile_aspd(url)
     dataset_cache[dataset_name] = df
@@ -29,12 +30,14 @@ def fetch_dataset(dataset_name):
 @app.callback(
     Output('skills-dropdown', 'style'),
     Output('knowledge-dropdown', 'style'),
+    Output('abilities-dropdown', 'style'),
     Input('dataset-checklist', 'value')
 )
 def update_dropdown_visibility(selected_datasets):
     skills_style = {'display': 'block', 'width': '100%'} if 'Skills' in selected_datasets else {'display': 'none'}
     knowledge_style = {'display': 'block', 'width': '100%'} if 'Knowledge' in selected_datasets else {'display': 'none'}
-    return skills_style, knowledge_style
+    abilities_style = {'display': 'block', 'width': '100%'} if 'Abilities' in selected_datasets else {'display': 'none'}
+    return skills_style, knowledge_style, abilities_style
 
 @app.callback(
     [Output(f'radar-plot-{i}', 'figure') for i in range(2)],
@@ -42,9 +45,10 @@ def update_dropdown_visibility(selected_datasets):
     State('dataset-checklist', 'value'),
     State('title-dropdown', 'value'),
     State('skills-dropdown', 'value'),
-    State('knowledge-dropdown', 'value')
+    State('knowledge-dropdown', 'value'),
+    State('abilities-dropdown', 'value')
 )
-def update_radar_plots(n_clicks, selected_datasets, selected_titles, selected_skills, selected_knowledge):
+def update_radar_plots(n_clicks, selected_datasets, selected_titles, selected_skills, selected_knowledge, selected_abilities):
     figures = []
     for i in range(2):
         if i < len(selected_titles):
@@ -57,15 +61,25 @@ def update_radar_plots(n_clicks, selected_datasets, selected_titles, selected_sk
                         (df['O*NET-SOC Code'] == title) &
                         (df['Element Name'].isin(selected_skills)) &
                         (df['Scale ID'] == "IM")
-                    ].copy()
+                    ].copy()  
+                    # Prepend "Skill: " to distinguish skill elements
                     filtered_df.loc[:, 'Element Name'] = "Skill: " + filtered_df['Element Name']
                 elif dataset == "Knowledge":
                     filtered_df = df.loc[
                         (df['O*NET-SOC Code'] == title) &
                         (df['Element Name'].isin(selected_knowledge)) &
                         (df['Scale ID'] == "IM")
-                    ].copy()
+                    ].copy()  # Use .copy() to avoid the warning
+                    # Prepend "Knowledge: " to distinguish knowledge elements
                     filtered_df.loc[:, 'Element Name'] = "Knowledge: " + filtered_df['Element Name']
+                elif dataset == "Abilities":
+                    filtered_df = df.loc[
+                        (df['O*NET-SOC Code'] == title) &
+                        (df['Element Name'].isin(selected_abilities)) &
+                        (df['Scale ID'] == "IM")
+                    ].copy()  # Use .copy() to avoid the warning
+                    # Prepend "Abilities: " to distinguish ability elements
+                    filtered_df.loc[:, 'Element Name'] = "Ability: " + filtered_df['Element Name']
                 else:
                     filtered_df = pd.DataFrame()
 
@@ -80,6 +94,7 @@ def update_radar_plots(n_clicks, selected_datasets, selected_titles, selected_sk
                 if col in combined_df.columns:
                     r_values = combined_df[col].tolist()
                     theta_values = combined_df['Element Name'].tolist()
+                    # Append the first element to the end to close the radar plot
                     r_values.append(r_values[0])
                     theta_values.append(theta_values[0])
                     fill = 'toself' if col == 'Data Value' else None
@@ -128,7 +143,6 @@ def update_radar_plots(n_clicks, selected_datasets, selected_titles, selected_sk
 
     return figures
 
-if __name__ == "__main__":
-    # Run the app
+if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8050))  # Default to 8050 if $PORT is not set
-    app.run_server(host="0.0.0.0", port=port)
+    app.run_server(host="0.0.0.0", port=port, debug=False) # Set debug=True for development, False for production
